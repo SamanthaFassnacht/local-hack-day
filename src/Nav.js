@@ -5,8 +5,8 @@ class Nav extends Component {
         return (
             <div className="nav">
                 <ul className="nav-left">
-                    <li>logo here</li>
-                    <li>Project Title Here</li>
+                    <li><img className="logo" src="./logo.png" alt="logo, named elawn"/></li>
+                    <li>Space Tour Simulator</li>
                 </ul>
                 <ul className="nav-right">
                     <li>About Idea</li>
