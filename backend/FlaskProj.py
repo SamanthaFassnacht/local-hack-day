@@ -41,8 +41,6 @@ def getRocketInfoFromName(name: str) -> Tuple[str]:
     return result
 
 
-class 
-
 #
 # if __name__ == "__main__":
 #     print(getAllPlanetsInit())
