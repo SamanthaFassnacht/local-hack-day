@@ -13,6 +13,25 @@ class DatabaseConnection:
         database="SPACE_TOURS_SIM_MAIN"
     )
 
+    def getAllPlanetsInit(self):
+        cur = mydb.cursor()
+        cur.execute("SELECT * FROM Planets")
+        result = cur.fetchall()
+
+        return result
+
+    def getAllRocketNames(self):
+        cur = mydb.cursor()
+        cur.execute("SELECT MoTName from ModeofTransportation")
+        result = cur.fetchall()
+
+        return result
+
+    def getRocketInfoFromName(self, name):
+        cur = mydb.cursor()
+        cur.execute("SELECT * FROM ModeofTransportation WHERE MoTName = %s", (name))
+        result = cur.fetchone()
+
 
 class PlanetsInit:
     def __init__(self):
