@@ -47,3 +47,17 @@ code {
 .nav-right li {
   padding-left: 10vw;
 }
+
+#sidebar {
+  background-color: #EEE5E9;
+  display: inline-block;
+  height: 86vh;
+  width: 19vw;
+}
+
+#simulation-area {
+  display: inline-block;
+  float: right;
+  height: 86vh;
+  width: 79vh;
+}
