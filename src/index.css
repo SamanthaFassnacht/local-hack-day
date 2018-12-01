@@ -12,3 +12,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.nav {
+    display: block;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 20px;
+    height: 14vh;
+    padding: 0vh;
+}
+
+.nav ul, .nav li {
+  display: inline-block;
+  padding: 0vh;
+}
+
+.nav-left {
+  line-height: 14vh;
+  margin-left: 4vw;
+  margin-top: 0vh;
+}
+
+.nav-left li {
+  padding-right: 1vw;
+}
+
+.nav-right {
+  float: right;
+  line-height: 14vh;
+  margin-top: 0vh;
+  margin-right: 4vw;
+}
+
+.nav-right li {
+  padding-left: 10vw;
+}
