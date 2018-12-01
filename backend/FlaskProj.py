@@ -180,3 +180,4 @@ if __name__ == "__main__":
     print(getPeriodFromPlanetName("Mars"))
     print(getOrbitRadiusFromPlanetName("Mars"))
     print(np.arange(1, 5*EARTH_DAYS_TO_ORBIT + 1))
+    app.run()
