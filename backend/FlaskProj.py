@@ -125,6 +125,49 @@ def convertEarthFromPolar(thetas: List[float]) -> List[float]:
     return [[EARTH_DIST_SUN * np.cos(theta), EARTH_DIST_SUN * np.sin(theta)] for theta in thetas]
 
 
+def simulation(r1, r2, p1, p2):
+    GM = 1.327 * 10 ** 11
+
+    a = (r1 + r2) / 2
+    p = np.sqrt(4 * (np.pi ** 2) * (a ** 3) / GM)
+    v1 = 2 * np.pi * r1 / p1
+    v2 = 2 * np.pi * r2 / p2
+
+    vp = (2 * np.pi * a / p) * np.sqrt(2 * a / r1 - 1)
+    dv1 = vp - v1
+
+    va = (2 * np.pi * a / p) * np.sqrt((2 * a / r2) - 1)
+
+    dv2 = v2 - va
+
+    tof = 0.5 * p
+    e = (a - r1) / a
+    b = np.sqrt(a ** 2 * (1 - e ** 2))
+    return dv1, dv2, tof, a, b
+
+
+def data_norm(t, theta1, theta2, v2):
+    t = t * 3.54e7
+    if theta2 >= theta1:
+        pos = (theta2 - theta1) / (2 * np.pi)
+    elif theta2 < theta1:
+        pos = (-theta2 + theta1) / (2 * np.pi)
+    return pos, t
+
+
+def gotime(tof, pos_ship, t, theta1, theta2, v2, threshold):
+    pos = data_norm(t, theta1, theta2)
+    if pos + (tof * v2) / (2 * np.pi) < 0.5 + threshold and pos + (tof * v2) / (2 * np.pi) > 0.5 - threshold:
+        return True
+    else:
+        return False
+
+
+dv1, dv2, tof, a, b = simulation(149600000, 227920000, 365.25636 * 86400, 686.6812 * 86400)
+print(
+    "dv1 = " + str(dv1) + ", dv2 = " + str(dv2) + ", tof = " + str(tof / 86400) + ", a = " + str(a) + ", b = " + str(b))
+
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -170,11 +213,55 @@ class GetEarthPath(Resource):
 
         return (times, earthxs, earthys)
 
+# starting_phi = 0.5
+# smi = 0.1
+# sma = 0.05
+
+
+# given semimajor, semiminor, starting point
+
+
+def flightpath(theta = 0.5, flightTime = 10000, smi = 0.1, sma = 0.05):
+    launch_x = np.cos(theta)
+    launch_y = np.sin(theta)
+
+    current_x, current_y = launch_x, launch_y
+
+    flight_path_x = np.array([launch_x])
+    flight_path_y = np.array([launch_y])
+    count = -np.pi / 2
+
+    while (count < np.pi / 2):
+        flight_path_x = np.append(flight_path_x, current_x - smi * np.cos(
+            theta) * np.cos(count) - sma * np.sin(theta) * np.sin(count))
+        flight_path_y = np.append(flight_path_y, current_y + smi * np.sin(
+            theta) * np.cos(count) - sma * np.cos(theta) * np.sin(count))
+        current_x = current_x - smi * np.cos(
+            theta) * np.cos(count) - sma * np.sin(theta) * np.sin(count)
+        current_y = current_y + smi * np.sin(
+            theta) * np.cos(count) - sma * np.cos(theta) * np.sin(count)
+        count += np.pi / flightTime
+
+    new_flight_path_x = [x + launch_y for x in flight_path_x]
+    return np.concatenate(new_flight_path_x, flight_path_y)
+
+
+
+class GetRocketPath(Resource):
+    def get(self, curYear=2018):
+        ls = flightpath()
+        time = np.arange(1, 10000, 1)
+        flightx = ls[0]
+        flighty = ls[1]
+        return {"time": time,
+                "x": flightx,
+                "y": flighty}
+
 
 api.add_resource(PlanetNames, '/PlanetNames')
 api.add_resource(GetMarsPath, '/GetMarsPath')
 api.add_resource(GetEarthPath, '/GetEarthPath')
-
+api.add_resource(GetRocketPath, '/GetRocketPath')
 
 if __name__ == "__main__":
     print(getAllPlanetsInit())
