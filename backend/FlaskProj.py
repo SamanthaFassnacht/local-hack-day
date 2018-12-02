@@ -165,11 +165,55 @@ class GetEarthPath(Resource):
                 "earthx": earthxs,
                 "earthy": earthys}
 
+# starting_phi = 0.5
+# smi = 0.1
+# sma = 0.05
+
+
+# given semimajor, semiminor, starting point
+
+
+def flightpath(theta = 0.5, flightTime = 10000, smi = 0.1, sma = 0.05):
+    launch_x = np.cos(theta)
+    launch_y = np.sin(theta)
+
+    current_x, current_y = launch_x, launch_y
+
+    flight_path_x = np.array([launch_x])
+    flight_path_y = np.array([launch_y])
+    count = -np.pi / 2
+
+    while (count < np.pi / 2):
+        flight_path_x = np.append(flight_path_x, current_x - smi * np.cos(
+            theta) * np.cos(count) - sma * np.sin(theta) * np.sin(count))
+        flight_path_y = np.append(flight_path_y, current_y + smi * np.sin(
+            theta) * np.cos(count) - sma * np.cos(theta) * np.sin(count))
+        current_x = current_x - smi * np.cos(
+            theta) * np.cos(count) - sma * np.sin(theta) * np.sin(count)
+        current_y = current_y + smi * np.sin(
+            theta) * np.cos(count) - sma * np.cos(theta) * np.sin(count)
+        count += np.pi / flightTime
+
+    new_flight_path_x = [x + launch_y for x in flight_path_x
+    return np.concatenate(new_flight_path_x, flight_path_y)
+
+
+
+class GetRocketPath(Resource):
+    def get(self, curYear=2018):
+        ls = flightpath()
+        time = np.arange(1, 10000, 1)
+        flightx = ls[0]
+        flighty = ls[1]
+        return {"time": time,
+                "x": flightx,
+                "y": flighty}
+
 
 api.add_resource(PlanetNames, '/PlanetNames')
 api.add_resource(GetMarsPath, '/GetMarsPath')
 api.add_resource(GetEarthPath, '/GetEarthPath')
-
+api.add_resource(GetRocketPath, '/GetRocketPath')
 
 if __name__ == "__main__":
     print(getAllPlanetsInit())
