@@ -18,8 +18,8 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        getEarthOrbitData();
-        getMarsOrbitData();
+        this.getEarthOrbitData();
+        this.getMarsOrbitData();
 
         var elem = document.getElementById('simulation');
         var params = { width: 800, height: 500, autoplay: true};
@@ -58,21 +58,24 @@ class Home extends Component {
 
     orbit = () => {
         if(this.state.earthXPos.length - this.state.currEarthPos > 50) {
-            
+            console.log("Hi");
         } else {
             console.log("Need new call here!");
         }
         if(this.state.marsXPos.length - this.state.currMarsPos > 50) {
-
+            console.log("Hi");
         }
     }
 
     getEarthOrbitData = () => {
-
+        fetch("/GetEarthPath").then(results => {
+            console.log("Success!");
+            console.log(results);
+        });
     }
 
     getMarsOrbitData = () => {
-        
+        console.log("Get data");
     }
 
     render() {

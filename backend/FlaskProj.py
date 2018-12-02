@@ -3,7 +3,7 @@ import numpy as np
 
 import pyodbc
 from flask import Flask
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource, reqparse, output_json
 
 
 def getThetaValues(overlap: float, daysToOrbit: int) -> List[float]:
@@ -149,7 +149,7 @@ class GetMarsPath(Resource):
                 "marsx": marsxs,
                 "marsy": marsys}
 
-
+@app.route('/GetEarthPath', methods=["GET"])
 class GetEarthPath(Resource):
     def get(self, curYear=2018):
         curOverlap = 0
@@ -160,10 +160,15 @@ class GetEarthPath(Resource):
         times = np.arange(1, 5*EARTH_DAYS_TO_ORBIT + 1)
         xyPairs = convertEarthFromPolar(getThetaValues(curOverlap, EARTH_DAYS_TO_ORBIT))
         earthxs = [p[0] for p in xyPairs]
-        earthys = [p[1] for p in xyPairs]
-        return {"time": times,
-                "earthx": earthxs,
-                "earthy": earthys}
+        # earthys = [p[1] for p in xyPairs]
+        # print(jsonify({"time": times,
+        #         "earthx": earthxs,
+        # #         "earthy": earthys}))
+        # return jsonify({"time": times,
+        #         "earthx": earthxs,
+        #         "earthy": earthys})
+
+        return (times, earthxs, earthys)
 
 
 api.add_resource(PlanetNames, '/PlanetNames')
